@@ -1,0 +1,10 @@
+package com.emobile.springtodo.repository.mapper;
+
+import com.emobile.springtodo.entity.User;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.stereotype.Component;
+
+@Component
+public class UserMapper extends BeanPropertyRowMapper<User> {
+
+}
