@@ -7,13 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.emobile.springtodo.repository.util.Tables.TASK;
+import static com.emobile.springtodo.repository.util.Tables.TASKS;
 
 @Repository
 public class TaskRepository extends AbstractRepository<Task> {
 
     public TaskRepository(TaskMapper rowMapper, JdbcTemplate jdbcTemplate) {
-        super(rowMapper, jdbcTemplate, TASK);
+        super(rowMapper, jdbcTemplate, TASKS);
     }
 
     public List<Task> findAllForUser(Long userId, int limit, int offset) {

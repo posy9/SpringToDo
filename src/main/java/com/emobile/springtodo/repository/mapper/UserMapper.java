@@ -6,5 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper extends BeanPropertyRowMapper<User> {
-
+    public UserMapper() {
+        super(User.class); // Явно указываем класс для маппинга
+    }
 }

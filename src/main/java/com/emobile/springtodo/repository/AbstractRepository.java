@@ -30,12 +30,12 @@ public abstract class AbstractRepository<T extends Entity> {
 
     public void delete(Long id) {
         String sql = String.format("DELETE FROM %s WHERE id = ?",tableName) ;
-        jdbcTemplate.update(sql, tableName, id);
+        jdbcTemplate.update(sql, id);
     }
 
     public List<T> findAll(int limit, int offset) {
         String sql = String.format("SELECT * FROM %s LIMIT ? OFFSET ?", tableName) ;
-        return jdbcTemplate.query(sql, rowMapper, tableName, limit, offset);
+        return jdbcTemplate.query(sql, rowMapper,  limit, offset);
     }
 
     public T findById(Long id) {
@@ -71,7 +71,8 @@ public abstract class AbstractRepository<T extends Entity> {
                 .map(field -> {
                     field.setAccessible(true);
                     try {
-                        return field.get(entity);
+                         var value = field.get(entity);
+                        return value  instanceof Enum ? value.toString() : value;
                     } catch (IllegalAccessException e) {
                         throw new FieldAccessException(String
                                 .format("Cannot access field %s in entity %s", field.getName(), entity));

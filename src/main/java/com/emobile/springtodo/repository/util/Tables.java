@@ -1,8 +1,8 @@
 package com.emobile.springtodo.repository.util;
 
 public enum Tables {
-    USER,
-    TASK;
+    USERS,
+    TASKS;
 
     @Override
     public String toString() {

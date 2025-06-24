@@ -6,4 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TaskMapper extends BeanPropertyRowMapper<Task> {
+    public TaskMapper() {
+        super(Task.class);
+    }
 }
