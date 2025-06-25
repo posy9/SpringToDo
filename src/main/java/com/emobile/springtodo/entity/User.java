@@ -1,7 +1,11 @@
 package com.emobile.springtodo.entity;
 
 import com.emobile.springtodo.annotation.DatabaseField;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class User implements Entity {
 
     private Long id;
@@ -16,13 +20,5 @@ public class User implements Entity {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 }
