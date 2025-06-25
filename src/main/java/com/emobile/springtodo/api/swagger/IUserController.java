@@ -29,7 +29,7 @@ public interface IUserController {
                                             value = """
                                                     {
                                                     "id": 1,
-                                                    "username": 'User1'
+                                                    "username": "User1"
                                                     }
                                                     """
                                     )
@@ -158,7 +158,7 @@ public interface IUserController {
 
             }
     )
-    void update(long id, UserRequest taskRequest);
+    void update(long id, UserRequest userRequest);
 
     @Operation(
             summary = "Удаление пользователя",
