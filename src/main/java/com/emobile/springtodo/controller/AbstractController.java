@@ -20,8 +20,8 @@ public abstract class AbstractController<ENTITY extends Entity, RESPONSE extends
 
     protected final BaseMapper<ENTITY, REQUEST> requestMapper;
     protected final BaseMapper<ENTITY, RESPONSE> responseMapper;
-    protected final MeterRegistry meterRegistry;
     private final AbstractService<ENTITY> entityService;
+    protected final MeterRegistry meterRegistry;
 
     @GetMapping
     List<RESPONSE> findAll(@RequestParam(defaultValue = "0") int page,
