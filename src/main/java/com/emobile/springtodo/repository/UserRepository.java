@@ -3,12 +3,10 @@ package com.emobile.springtodo.repository;
 import com.emobile.springtodo.entity.User;
 import com.emobile.springtodo.exception.EntityNotFoundException;
 import com.emobile.springtodo.repository.mapper.UserMapper;
-import org.postgresql.util.PSQLException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import static com.emobile.springtodo.repository.util.Tables.TASKS;
 import static com.emobile.springtodo.repository.util.Tables.USERS;
 
 @Repository

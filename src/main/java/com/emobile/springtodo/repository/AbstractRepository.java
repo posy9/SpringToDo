@@ -6,7 +6,6 @@ import com.emobile.springtodo.exception.EntityNotFoundException;
 import com.emobile.springtodo.exception.FieldAccessException;
 import com.emobile.springtodo.repository.util.Tables;
 import lombok.AllArgsConstructor;
-import org.postgresql.util.PSQLException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

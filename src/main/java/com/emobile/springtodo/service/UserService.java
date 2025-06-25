@@ -25,10 +25,9 @@ public class UserService extends AbstractService<User> {
     @Transactional
     @CacheEvict(value = "usersList", allEntries = true)
     public void save(User user) {
-        if(userRepository.findByUsername(user.getUsername()) == null) {
+        if (userRepository.findByUsername(user.getUsername()) == null) {
             super.save(user);
-        }
-        else {
+        } else {
             throw new EntityExistsException(String.format("User %s already exists", user.getUsername()));
         }
     }
