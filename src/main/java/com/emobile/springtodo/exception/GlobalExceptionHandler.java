@@ -14,16 +14,16 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler(EntityExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Map<String, String> handlePSQLException(EntityNotFoundException ex) {
+    Map<String, String> handleEntityExistsException(EntityExistsException ex) {
         return Map.of("message", ex.getMessage());
     }
 
-    @ExceptionHandler(PSQLException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Map<String, String> handlePSQLException(PSQLException ex) {
-        return Map.of("message", "User with this id does not exist");
+    Map<String, String> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return Map.of("message", ex.getMessage());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
