@@ -2,6 +2,7 @@ package com.emobile.springtodo.service;
 
 import com.emobile.springtodo.entity.User;
 import com.emobile.springtodo.exception.EntityExistsException;
+import com.emobile.springtodo.exception.EntityNotFoundException;
 import com.emobile.springtodo.repository.UserRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -53,7 +54,11 @@ public class UserService extends AbstractService<User> {
             }
     )
     public void delete(long id) {
-        super.delete(id);
+        if(userRepository.existsById(id)) {
+            super.delete(id);
+        } else {
+            throw new EntityNotFoundException(String.format("User with id %s not found", id));
+        }
     }
 
     @Override
@@ -64,7 +69,11 @@ public class UserService extends AbstractService<User> {
             }
     )
     public void update(User user) {
-        super.update(user);
+        if(userRepository.findByUsername(user.getUsername()) == null) {
+            super.update(user);
+        } else {
+            throw new EntityExistsException(String.format("User %s already exists", user.getUsername()));
+        }
     }
 
 

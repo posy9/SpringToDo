@@ -93,7 +93,12 @@ public class TaskService extends AbstractService<Task> {
             }
     )
     public void delete(long id) {
-        super.delete(id);
+        if(taskRepository.existsById(id)) {
+            super.delete(id);
+        } else {
+            throw new EntityNotFoundException(String.format("Task with id %s not found", id));
+        }
+
     }
 
 }

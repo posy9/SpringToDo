@@ -62,6 +62,15 @@ public abstract class AbstractRepository<T extends Entity> {
         jdbcTemplate.update(query, fieldsToUpdateAndEntityId);
     }
 
+    public boolean existsById(Long id) {
+        try {
+            findById(id);
+            return true;
+        } catch (EntityNotFoundException e) {
+            return false;
+        }
+    }
+
 
     private String buildUpdateQuery(List<String> fieldNames) {
         String setExpression = fieldNames.stream()

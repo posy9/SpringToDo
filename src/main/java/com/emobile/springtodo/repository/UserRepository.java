@@ -23,14 +23,4 @@ public class UserRepository extends AbstractRepository<User> {
             return null;
         }
     }
-
-    public boolean existsById(Long id) {
-        try {
-            super.findById(id);
-            return true;
-        } catch (EntityNotFoundException e) {
-            return false;
-        }
-    }
-
 }

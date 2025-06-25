@@ -175,7 +175,7 @@ public interface ITaskController {
             description = "Сохраняет дело для существующего пользователя",
             responses = {
                     @ApiResponse(
-                            description = "Отзыв сохранен",
+                            description = "Дело сохранено",
                             responseCode = "201"),
                     @ApiResponse(
                             description = "Попытка сохранения дела для несуществующего пользователя",
@@ -231,8 +231,24 @@ public interface ITaskController {
             description = "Удаление дела по его id",
             responses = {
                     @ApiResponse(
-                            description = "Отзыв удален",
+                            description = "Дело удалено",
                             responseCode = "204"
+                    ),
+                    @ApiResponse(
+                            description = "Дело с указанным id не  найдено",
+                            responseCode = "400",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                "message": "Task with id 323 not found"
+                                                            }
+                                                            """
+                                            )
+                                    }
+                            )
                     )
             }
     )
