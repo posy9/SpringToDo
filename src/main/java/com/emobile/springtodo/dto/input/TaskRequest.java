@@ -1,9 +1,10 @@
 package com.emobile.springtodo.dto.input;
 
 import com.emobile.springtodo.entity.Status;
+import jakarta.validation.constraints.Positive;
 
 public record TaskRequest(String title,
                           String description,
                           Status status,
-                          Long userId) implements EntityRequest {
+                          @Positive(message = "can not be less than 1") Long userId) implements EntityRequest {
 }

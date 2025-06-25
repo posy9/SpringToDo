@@ -1,5 +1,7 @@
 package com.emobile.springtodo.dto.input;
 
-public record UserRequest(String username) implements EntityRequest {
+import jakarta.validation.constraints.NotNull;
+
+public record UserRequest(@NotNull(message = "should not be null") String username) implements EntityRequest {
 }
 

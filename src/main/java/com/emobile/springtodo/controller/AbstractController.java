@@ -5,6 +5,7 @@ import com.emobile.springtodo.dto.mapper.BaseMapper;
 import com.emobile.springtodo.dto.output.EntityResponse;
 import com.emobile.springtodo.entity.Entity;
 import com.emobile.springtodo.service.AbstractService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -33,14 +34,14 @@ public abstract class AbstractController<ENTITY extends Entity, RESPONSE extends
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    void create(@RequestBody REQUEST entity) {
+    void create(@RequestBody @Valid REQUEST entity) {
         ENTITY entityToCreate = requestMapper.toEntity(entity);
         entityService.save(entityToCreate);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}")
-    void update(@PathVariable long id, @RequestBody REQUEST entity) {
+    void update(@PathVariable long id, @RequestBody @Valid REQUEST entity) {
         ENTITY entityToUpdate = requestMapper.toEntity(entity);
         entityToUpdate.setId(id);
         entityService.update(entityToUpdate);

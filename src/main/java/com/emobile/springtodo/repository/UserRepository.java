@@ -2,6 +2,7 @@ package com.emobile.springtodo.repository;
 
 import com.emobile.springtodo.entity.User;
 import com.emobile.springtodo.repository.mapper.UserMapper;
+import org.postgresql.util.PSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +13,5 @@ public class UserRepository extends AbstractRepository<User> {
     public UserRepository(UserMapper rowMapper, JdbcTemplate jdbcTemplate) {
         super(rowMapper, jdbcTemplate, USERS);
     }
+
 }

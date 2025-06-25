@@ -2,13 +2,12 @@ package com.emobile.springtodo.entity;
 
 import com.emobile.springtodo.annotation.DatabaseField;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @RequiredArgsConstructor
-@Getter
 @Setter
+@Getter
 public class Task implements Entity {
 
     private Long id;
@@ -32,4 +31,5 @@ public class Task implements Entity {
     public void setId(Long id) {
         this.id = id;
     }
+
 }

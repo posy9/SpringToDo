@@ -2,9 +2,12 @@ package com.emobile.springtodo.repository;
 
 import com.emobile.springtodo.annotation.DatabaseField;
 import com.emobile.springtodo.entity.Entity;
+import com.emobile.springtodo.exception.EntityNotFoundException;
 import com.emobile.springtodo.exception.FieldAccessException;
 import com.emobile.springtodo.repository.util.Tables;
 import lombok.AllArgsConstructor;
+import org.postgresql.util.PSQLException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -29,25 +32,35 @@ public abstract class AbstractRepository<T extends Entity> {
     }
 
     public void delete(Long id) {
-        String sql = String.format("DELETE FROM %s WHERE id = ?",tableName) ;
+        String sql = String.format("DELETE FROM %s WHERE id = ?", tableName);
         jdbcTemplate.update(sql, id);
     }
 
     public List<T> findAll(int limit, int offset) {
-        String sql = String.format("SELECT * FROM %s LIMIT ? OFFSET ?", tableName) ;
-        return jdbcTemplate.query(sql, rowMapper,  limit, offset);
+        String sql = String.format("SELECT * FROM %s LIMIT ? OFFSET ?", tableName);
+        var foundEntities = jdbcTemplate.query(sql, rowMapper, limit, offset);
+        if (foundEntities.isEmpty()) {
+            throw new EntityNotFoundException("Entities for your request are not found");
+        }
+        return foundEntities;
     }
 
     public T findById(Long id) {
-        String sql = String.format("SELECT * FROM %s WHERE id = ?", tableName) ;
-        return jdbcTemplate.queryForObject(sql, rowMapper, id);
+        String sql = String.format("SELECT * FROM %s WHERE id = ?", tableName);
+        try {
+            return jdbcTemplate.queryForObject(sql, rowMapper, id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("Entity for your request is not found");
+        }
     }
 
     public void update(T entity) {
         var fieldsToUpdate = extractFields(entity);
+        var fieldsToUpdateAndEntityId = Arrays.copyOf(fieldsToUpdate, fieldsToUpdate.length + 1);
+        fieldsToUpdateAndEntityId[fieldsToUpdate.length] = entity.getId();
         var fieldNames = extractFieldNames(entity);
         var query = buildUpdateQuery(fieldNames);
-        jdbcTemplate.update(query, fieldsToUpdate, entity.getId());
+        jdbcTemplate.update(query, fieldsToUpdateAndEntityId);
     }
 
 
@@ -55,7 +68,7 @@ public abstract class AbstractRepository<T extends Entity> {
         String setExpression = fieldNames.stream()
                 .map(col -> col + " = ?")
                 .collect(Collectors.joining(", "));
-        return String.format("UPDATE %s SET %s WHERE id = ?", tableName,setExpression);
+        return String.format("UPDATE %s SET %s WHERE id = ?", tableName, setExpression);
     }
 
     private String buildInsertQuery(List<String> fieldNames) {
@@ -71,8 +84,8 @@ public abstract class AbstractRepository<T extends Entity> {
                 .map(field -> {
                     field.setAccessible(true);
                     try {
-                         var value = field.get(entity);
-                        return value  instanceof Enum ? value.toString() : value;
+                        var value = field.get(entity);
+                        return value instanceof Enum ? value.toString() : value;
                     } catch (IllegalAccessException e) {
                         throw new FieldAccessException(String
                                 .format("Cannot access field %s in entity %s", field.getName(), entity));
