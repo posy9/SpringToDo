@@ -54,7 +54,7 @@ public class UserService extends AbstractService<User> {
             }
     )
     public void delete(long id) {
-        if(userRepository.existsById(id)) {
+        if (userRepository.existsById(id)) {
             super.delete(id);
         } else {
             throw new EntityNotFoundException(String.format("User with id %s not found", id));
@@ -69,7 +69,7 @@ public class UserService extends AbstractService<User> {
             }
     )
     public void update(User user) {
-        if(userRepository.findByUsername(user.getUsername()) == null) {
+        if (userRepository.findByUsername(user.getUsername()) == null) {
             super.update(user);
         } else {
             throw new EntityExistsException(String.format("User %s already exists", user.getUsername()));

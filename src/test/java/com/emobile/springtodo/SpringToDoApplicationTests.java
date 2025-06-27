@@ -1,7 +1,6 @@
 package com.emobile.springtodo;
 
 
-
 import com.emobile.springtodo.controller.TaskController;
 import com.emobile.springtodo.controller.UserController;
 import com.emobile.springtodo.repository.TaskRepository;
@@ -9,7 +8,6 @@ import com.emobile.springtodo.repository.UserRepository;
 import com.emobile.springtodo.service.TaskService;
 import com.emobile.springtodo.service.UserService;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -40,7 +38,6 @@ class SpringToDoApplicationTests {
     private UserController userController;
     @Autowired
     private TaskController taskController;
-
 
 
     @Test

@@ -1,7 +1,6 @@
 package com.emobile.springtodo.repository;
 
 import com.emobile.springtodo.entity.User;
-import com.emobile.springtodo.exception.EntityNotFoundException;
 import com.emobile.springtodo.repository.mapper.UserMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

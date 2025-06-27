@@ -1,11 +1,9 @@
 package com.emobile.springtodo.controller;
 
 import com.emobile.springtodo.api.swagger.IUserController;
-import com.emobile.springtodo.dto.input.TaskRequest;
 import com.emobile.springtodo.dto.input.UserRequest;
 import com.emobile.springtodo.dto.mapper.UserRequestMapper;
 import com.emobile.springtodo.dto.mapper.UserResponseMapper;
-import com.emobile.springtodo.dto.output.TaskResponse;
 import com.emobile.springtodo.dto.output.UserResponse;
 import com.emobile.springtodo.entity.User;
 import com.emobile.springtodo.service.UserService;
