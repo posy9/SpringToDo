@@ -192,15 +192,30 @@ public interface ITaskController {
                                             )
                                     }
                             )
+                    ),
+                    @ApiResponse(
+                            description = "Введены некорректные значения параметров дела",
+                            responseCode = "400",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                              "message": "Incorrect types of input values"
+                                                            }
+                                                            """
+                                            )
+                                    }
+                            )
                     )
-
             }
     )
     void create(TaskRequest taskRequest);
 
     @Operation(
             summary = "Обновление дела",
-            description = "Обновляет дело по его id",
+            description = "Обновляет дело по его id, неустановленные поля остаются с прежними значениями",
             responses = {
                     @ApiResponse(
                             description = "Дело обновлено",
@@ -220,8 +235,23 @@ public interface ITaskController {
                                             )
                                     }
                             )
+                    ),
+                    @ApiResponse(
+                            description = "Введены некорректные значения параметров дела",
+                            responseCode = "400",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                              "message": "Incorrect types of input values"
+                                                            }
+                                                            """
+                                            )
+                                    }
+                            )
                     )
-
             }
     )
     void update(long id, TaskRequest taskRequest);

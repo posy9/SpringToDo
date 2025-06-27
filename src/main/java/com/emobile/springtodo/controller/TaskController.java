@@ -57,6 +57,4 @@ public class TaskController extends AbstractController<Task, TaskResponse, TaskR
     public void update(@PathVariable long id, @RequestBody @Valid TaskRequest taskRequest) {
         super.update(id, taskRequest);
     }
-
-
 }

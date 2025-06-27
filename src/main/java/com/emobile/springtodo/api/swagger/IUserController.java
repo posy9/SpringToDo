@@ -126,15 +126,46 @@ public interface IUserController {
                                             )
                                     }
                             )
+                    ),
+                    @ApiResponse(
+                            description = "Попытка сохранения пользователя без введенного имени",
+                            responseCode = "400",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                             "username": "should not be null"
+                                                            }
+                                                            """
+                                            )
+                            }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Введены некорректные значения параметров пользователя",
+                            responseCode = "400",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                              "message": "Incorrect types of input values"
+                                                            }
+                                                            """
+                                            )
+                                    }
+                            )
                     )
-
             }
     )
     void create(UserRequest userRequest);
 
     @Operation(
             summary = "Обновление пользователя",
-            description = "Обновляет пользователя по его id",
+            description = "Обновляет пользователя по его id, неустановленные поля остаются с прежними значениями",
             responses = {
                     @ApiResponse(
                             description = "Пользователь обновлен",
@@ -154,8 +185,39 @@ public interface IUserController {
                                             )
                                     }
                             )
+                    ),
+                    @ApiResponse(
+                            description = "Попытка обновления имени пользователя на null",
+                            responseCode = "400",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                             "username": "should not be null"
+                                                            }
+                                                            """
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Введены некорректные значения параметров пользователя",
+                            responseCode = "400",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                              "message": "Incorrect types of input values"
+                                                            }
+                                                            """
+                                            )
+                                    }
+                            )
                     )
-
             }
     )
     void update(long id, UserRequest userRequest);
