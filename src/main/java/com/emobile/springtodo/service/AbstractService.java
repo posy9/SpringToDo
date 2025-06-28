@@ -32,11 +32,7 @@ public abstract class AbstractService<ENTITY extends Entity> {
     @Transactional(readOnly = true)
     public List<ENTITY> findAll(int page, int size) {
         int offset = page * size;
-        var entities = entityRepository.findAll(size, offset);
-        if (entities.isEmpty()) {
-            throw new EntityNotFoundException("Entities for your request are not found");
-        }
-        return entities;
+        return entityRepository.findAll(size, offset);
     }
 
     @Transactional(readOnly = true)
