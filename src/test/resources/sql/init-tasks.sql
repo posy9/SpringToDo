@@ -1,6 +1,3 @@
--- INSERT into users(username) VALUES ('User1');
--- INSERT into users(username) VALUES ('User2');
--- INSERT into users(username) VALUES ('User3');
 INSERT INTO tasks(id, title, description, status, userid)
 VALUES (1, 'Task1', 'Description for task1', 'CREATED', 1);
 INSERT INTO tasks(id, title, description, status, userid)

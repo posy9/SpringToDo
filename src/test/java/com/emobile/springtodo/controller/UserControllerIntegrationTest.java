@@ -1,6 +1,8 @@
 package com.emobile.springtodo.controller;
 
+import com.emobile.springtodo.dto.input.TaskRequest;
 import com.emobile.springtodo.dto.input.UserRequest;
+import com.emobile.springtodo.entity.Status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +23,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -159,6 +161,161 @@ public class UserControllerIntegrationTest {
                         .content(requestJson))
                 .andExpectAll(
                         status().isBadRequest())
+                .andReturn();
+        String actualJson = badRequestResult.getResponse().getContentAsString();
+        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    @Sql("/sql/init-users.sql")
+    @Sql(scripts = "/sql/clean-db.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("GET /users возвращает список пользователей")
+    void findAll_shouldFindAllUsers() throws Exception {
+        String expectedJson = """
+                          [
+                           {
+                             "id": 1,
+                             "username": "User1"
+                           },
+                           {
+                             "id": 2,
+                             "username": "User2"
+                           },
+                           {
+                             "id": 3,
+                             "username": "User3"
+                           }
+                         ]
+                """;
+
+        MvcResult result = mockMvc.perform(get("/users"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String actualJson = result.getResponse().getContentAsString();
+        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    @DisplayName("GET /users возвращает 400 если пользователи не найдены")
+    void findAll_shouldReturnError_whenUsersNotFound() throws Exception {
+        String expectedJson = """
+                {
+                message: "Entities for your request are not found"
+                }
+                """;
+        MvcResult badRequestResult = mockMvc.perform(get("/users"))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String actualJson = badRequestResult.getResponse().getContentAsString();
+        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    @Sql("/sql/init-users.sql")
+    @Sql(scripts = "/sql/clean-db.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("PUT /users/{id} обновляет пользователя")
+    void update_shouldUpdateUser() throws Exception {
+        UserRequest updatedUser = UserRequest.builder()
+                .username("updatedUser")
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(updatedUser);
+        String expectedJson = """
+                 {
+                             "id": 1,
+                             "username": "updatedUser"
+                 }
+                """;
+
+        mockMvc.perform(put("/users/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk());
+
+        MvcResult result = mockMvc.perform(get("/users/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String actualJson = result.getResponse().getContentAsString();
+        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    @Sql("/sql/init-users.sql")
+    @Sql(scripts = "/sql/clean-db.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("PUT /users возвращает 400 при попытке обновить пользователя без имени")
+    void update_shouldReturnError_whenUsernameIsNull() throws Exception {
+
+        UserRequest newUser = UserRequest.builder()
+                .username(null)
+                .build();
+        String requestJson = objectMapper.writeValueAsString(newUser);
+        String expectedJson = """
+                 {
+                         "username": "should not be null"
+                 }
+                """;
+
+        MvcResult badRequestResult = mockMvc.perform(put("/users/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpectAll(
+                        status().isBadRequest())
+                .andReturn();
+        String actualJson = badRequestResult.getResponse().getContentAsString();
+        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    @DisplayName("PUT /users возвращает 400 при попытке обновить имя пользователя на существующее")
+    @Sql("/sql/init-users.sql")
+    @Sql(scripts = "/sql/clean-db.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void update_shouldReturnError_whenUsernameExists() throws Exception {
+
+        UserRequest newUser = UserRequest.builder()
+                .username("User2")
+                .build();
+        String requestJson = objectMapper.writeValueAsString(newUser);
+        String expectedJson = """
+                 {
+                         "message": "User User2 already exists"
+                 }
+                """;
+
+        MvcResult badRequestResult = mockMvc.perform(put("/users/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpectAll(
+                        status().isBadRequest())
+                .andReturn();
+        String actualJson = badRequestResult.getResponse().getContentAsString();
+        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    @Sql("/sql/init-users.sql")
+    @Sql(scripts = "/sql/clean-db.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("DELETE /users/{id} удаляет пользователя")
+    void delete_shouldDeleteTask_whenTaskExists() throws Exception {
+        mockMvc.perform(delete("/users/{id}", 1L))
+                .andExpect(status().isNoContent());
+
+    }
+
+    @Test
+    @DisplayName("DELETE /users/{id} возвращает 400 при попытке удаления несуществующего пользователя")
+    void delete_shouldReturnError_whenTaskNotExist() throws Exception {
+        String expectedJson = """
+                 {
+                 "message":"User with id 1 not found"
+                 }
+                """;
+
+        MvcResult badRequestResult = mockMvc.perform(delete("/users/{id}", 1L))
+                .andExpect(status().isBadRequest())
                 .andReturn();
         String actualJson = badRequestResult.getResponse().getContentAsString();
         JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
