@@ -92,6 +92,7 @@ public class TaskService extends AbstractService<Task> {
                     @CacheEvict(cacheNames = "tasksList", allEntries = true)
             }
     )
+    @Override
     public void delete(long id) {
         if (taskRepository.existsById(id)) {
             super.delete(id);

@@ -23,27 +23,33 @@ public class UserController extends AbstractController<User, UserResponse, UserR
     }
 
     @GetMapping("/{id}")
+    @Override
     public UserResponse findById(@PathVariable long id) {
         return super.findById(id);
     }
 
     @GetMapping
+    @Override
     public List<UserResponse> findAll(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         return super.findAll(page, size);
     }
 
     @PostMapping
+    @Override
     public void create(@RequestBody @Valid UserRequest userRequest) {
         super.create(userRequest);
     }
 
+
     @DeleteMapping("/{id}")
+    @Override
     public void delete(@PathVariable long id) {
         super.delete(id);
     }
 
     @PutMapping("/{id}")
+    @Override
     public void update(@PathVariable long id, @RequestBody @Valid UserRequest userRequest) {
         super.update(id, userRequest);
     }

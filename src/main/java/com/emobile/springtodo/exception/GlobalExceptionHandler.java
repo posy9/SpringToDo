@@ -13,22 +13,24 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String MESSAGE_FIELD_NAME = "message";
+
     @ExceptionHandler(EntityExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> handleEntityExistsException(EntityExistsException ex) {
-        return Map.of("message", ex.getMessage());
+        return Map.of(MESSAGE_FIELD_NAME, ex.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return Map.of("message", ex.getMessage());
+        return Map.of(MESSAGE_FIELD_NAME, ex.getMessage());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     Map<String, String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        return Map.of("message", "Incorrect types of input values");
+        return Map.of(MESSAGE_FIELD_NAME, "Incorrect types of input values");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

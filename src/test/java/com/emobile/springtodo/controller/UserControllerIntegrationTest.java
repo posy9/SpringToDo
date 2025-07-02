@@ -1,8 +1,6 @@
 package com.emobile.springtodo.controller;
 
-import com.emobile.springtodo.dto.input.TaskRequest;
 import com.emobile.springtodo.dto.input.UserRequest;
-import com.emobile.springtodo.entity.Status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

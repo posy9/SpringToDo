@@ -26,6 +26,7 @@ public class TaskController extends AbstractController<Task, TaskResponse, TaskR
     }
 
     @GetMapping("/user/{id}")
+    @Override
     public List<TaskResponse> getTasksForUser(@PathVariable long id, @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size) {
         meterRegistry.counter("request.count").increment();
@@ -33,27 +34,32 @@ public class TaskController extends AbstractController<Task, TaskResponse, TaskR
     }
 
     @GetMapping("/{id}")
+    @Override
     public TaskResponse findById(@PathVariable long id) {
         return super.findById(id);
     }
 
     @GetMapping
+    @Override
     public List<TaskResponse> findAll(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         return super.findAll(page, size);
     }
 
     @PostMapping
+    @Override
     public void create(@RequestBody @Valid TaskRequest taskRequest) {
         super.create(taskRequest);
     }
 
     @DeleteMapping("/{id}")
+    @Override
     public void delete(@PathVariable long id) {
         super.delete(id);
     }
 
     @PutMapping("/{id}")
+    @Override
     public void update(@PathVariable long id, @RequestBody @Valid TaskRequest taskRequest) {
         super.update(id, taskRequest);
     }

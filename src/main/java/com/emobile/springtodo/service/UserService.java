@@ -25,6 +25,7 @@ public class UserService extends AbstractService<User> {
 
     @Transactional
     @CacheEvict(value = "usersList", allEntries = true)
+    @Override
     public void save(User user) {
         if (userRepository.findByUsername(user.getUsername()) == null) {
             super.save(user);

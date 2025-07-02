@@ -1,7 +1,6 @@
 package com.emobile.springtodo.service;
 
 import com.emobile.springtodo.entity.Entity;
-import com.emobile.springtodo.exception.EntityNotFoundException;
 import com.emobile.springtodo.repository.AbstractRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
