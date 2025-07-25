@@ -1,6 +1,6 @@
 package com.emobile.springtodo.entity;
 
-public interface Entity {
+public interface CommonEntity {
     Long getId();
 
     void setId(Long id);

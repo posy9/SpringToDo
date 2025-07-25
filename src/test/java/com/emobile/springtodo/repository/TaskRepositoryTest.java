@@ -2,8 +2,8 @@ package com.emobile.springtodo.repository;
 
 import com.emobile.springtodo.entity.Status;
 import com.emobile.springtodo.entity.Task;
+import com.emobile.springtodo.entity.User;
 import com.emobile.springtodo.exception.EntityNotFoundException;
-import com.emobile.springtodo.repository.mapper.TaskMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("Тесты TaskRepository")
 @Testcontainers
 @DataJpaTest
-@Import({TaskRepository.class, TaskMapper.class})
+@Import({TaskRepository.class})
 public class TaskRepositoryTest {
 
     @Container
@@ -47,7 +47,7 @@ public class TaskRepositoryTest {
         assertThat(task.getTitle()).isEqualTo("Task1");
         assertThat(task.getDescription()).isEqualTo("Description for task1");
         assertThat(task.getStatus()).isEqualTo(Status.CREATED);
-        assertThat(task.getUserId()).isEqualTo(1L);
+        assertThat(task.getUser().getId()).isEqualTo(1L);
     }
 
     @Test
@@ -63,8 +63,8 @@ public class TaskRepositoryTest {
         List<Task> tasks = taskRepository.findAllForUser(1L, 10, 0);
 
         assertThat(tasks).hasSize(2);
-        assertThat(tasks.get(0).getUserId()).isEqualTo(1L);
-        assertThat(tasks.get(1).getUserId()).isEqualTo(1L);
+        assertThat(tasks.get(0).getUser().getId()).isEqualTo(1L);
+        assertThat(tasks.get(1).getUser().getId()).isEqualTo(1L);
         assertThat(tasks.get(0).getTitle()).isEqualTo("Task1");
         assertThat(tasks.get(1).getTitle()).isEqualTo("Task2");
     }
@@ -80,7 +80,7 @@ public class TaskRepositoryTest {
         assertThat(tasks.getFirst().getTitle()).isEqualTo("Task1");
         assertThat(tasks.getFirst().getDescription()).isEqualTo("Description for task1");
         assertThat(tasks.getFirst().getStatus()).isEqualTo(Status.CREATED);
-        assertThat(tasks.getFirst().getUserId()).isEqualTo(1L);
+        assertThat(tasks.getFirst().getUser().getId()).isEqualTo(1L);
     }
 
     @Test
@@ -97,7 +97,6 @@ public class TaskRepositoryTest {
         newTask.setStatus(null);
 
         taskRepository.save(newTask);
-
         List<Task> createdTask = taskRepository.findAllForUser(1L, 10, 0);
         assertThat(createdTask).hasSize(1);
         assertThat(createdTask.getFirst().getStatus()).isEqualTo(Status.CREATED);
@@ -163,7 +162,9 @@ public class TaskRepositoryTest {
         Task task = new Task();
         task.setTitle("Test task");
         task.setDescription("Test description");
-        task.setUserId(1L);
+        var user = new User();
+        user.setId(1L);
+        task.setUser(user);
         return task;
     }
 }

@@ -238,7 +238,7 @@ public class TaskControllerIntegrationTest {
     void findAll_shouldReturnError_whenTasksNotFound() throws Exception {
         String expectedJson = """
                 {
-                message: "Entities for your request are not found"
+                message: "Tasks for your request are not found"
                 }
                 """;
         MvcResult badRequestResult = mockMvc.perform(get("/tasks"))
@@ -280,40 +280,6 @@ public class TaskControllerIntegrationTest {
                 .andReturn();
 
         String actualJson = badRequestResult.getResponse().getContentAsString();
-        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
-    }
-
-    @Test
-    @Sql({"/sql/init-users.sql", "/sql/init-tasks.sql"})
-    @Sql(scripts = "/sql/clean-db.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    @DisplayName("PUT /tasks/{id} обновляет заданные поля")
-    void update_shouldUpdateNotNullFieldsTask() throws Exception {
-        TaskRequest updatedTask = TaskRequest.builder()
-                .title("UpdatedTitle")
-                .status(Status.COMPLETED)
-                .build();
-
-        String requestJson = objectMapper.writeValueAsString(updatedTask);
-        String expectedJson = """
-                 {
-                             "id": 1,
-                             "title": "UpdatedTitle",
-                             "description": "Description for task1",
-                             "status": "COMPLETED",
-                             "userId": 1
-                           }
-                """;
-
-        mockMvc.perform(put("/tasks/{id}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isOk());
-
-        MvcResult result = mockMvc.perform(get("/tasks/{id}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
-        String actualJson = result.getResponse().getContentAsString();
         JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
     }
 

@@ -54,10 +54,10 @@ public class TaskService extends AbstractService<Task> {
             }
     )
     public void save(Task task) {
-        if (task.getUserId() != null && userRepository.existsById(task.getUserId())) {
+        if (task.getUser().getId() != null && userRepository.existsById(task.getUser().getId())) {
             super.save(task);
         } else {
-            throw new EntityNotFoundException(String.format("User with id %s not found", task.getUserId()));
+            throw new EntityNotFoundException(String.format("User with id %s not found", task.getUser().getId()));
         }
     }
 
@@ -71,10 +71,10 @@ public class TaskService extends AbstractService<Task> {
             }
     )
     public void update(Task task) {
-        if (task.getUserId() == null || userRepository.existsById(task.getUserId())) {
+        if (task.getUser().getId() == null || userRepository.existsById(task.getUser().getId())) {
             super.update(task);
         } else {
-            throw new EntityNotFoundException(String.format("User with id %s not found", task.getUserId()));
+            throw new EntityNotFoundException(String.format("User with id %s not found", task.getUser().getId()));
         }
     }
 

@@ -11,8 +11,8 @@ public class MetricConfig {
     @Bean
     MeterBinder meterBinder() {
         return meterRegistry ->
-            Counter.builder("request.count")
-                    .description("Total number of requests")
-                    .register(meterRegistry);
+                Counter.builder("request.count")
+                        .description("Total number of requests")
+                        .register(meterRegistry);
     }
 }
