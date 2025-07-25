@@ -2,6 +2,7 @@ package com.emobile.springtodo.service;
 
 import com.emobile.springtodo.entity.Status;
 import com.emobile.springtodo.entity.Task;
+import com.emobile.springtodo.entity.User;
 import com.emobile.springtodo.exception.EntityNotFoundException;
 import com.emobile.springtodo.repository.TaskRepository;
 import com.emobile.springtodo.repository.UserRepository;
@@ -98,7 +99,7 @@ class TaskServiceTest {
     @DisplayName("update() обновляет дело с null идентификатором пользователя")
     void update_shouldUpdateTask_whenUserIdIsNull() {
         Task task = createTask(1L, null);
-        task.setUserId(null);
+        task.getUser().setId(null);
         when(taskRepository.findById(1L)).thenReturn(task);
 
         taskService.update(task);
@@ -150,7 +151,9 @@ class TaskServiceTest {
         task.setTitle("Test Task " + id);
         task.setDescription("Test Description " + id);
         task.setStatus(Status.CREATED);
-        task.setUserId(userId);
+        var user = new User();
+        user.setId(userId);
+        task.setUser(user);
         return task;
     }
 }

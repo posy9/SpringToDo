@@ -3,7 +3,7 @@ package com.emobile.springtodo.controller;
 import com.emobile.springtodo.dto.input.EntityRequest;
 import com.emobile.springtodo.dto.mapper.BaseMapper;
 import com.emobile.springtodo.dto.output.EntityResponse;
-import com.emobile.springtodo.entity.Entity;
+import com.emobile.springtodo.entity.CommonEntity;
 import com.emobile.springtodo.service.AbstractService;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.validation.Valid;
@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @RequiredArgsConstructor
-public abstract class AbstractController<ENTITY extends Entity, RESPONSE extends EntityResponse, REQUEST extends EntityRequest> {
+public abstract class AbstractController<ENTITY extends CommonEntity, RESPONSE extends EntityResponse, REQUEST extends EntityRequest> {
 
     private static final String METRIC_NAME = "request.count";
     protected final BaseMapper<ENTITY, REQUEST> requestMapper;

@@ -200,7 +200,7 @@ public class UserControllerIntegrationTest {
     void findAll_shouldReturnError_whenUsersNotFound() throws Exception {
         String expectedJson = """
                 {
-                message: "Entities for your request are not found"
+                message: "Tasks for your request are not found"
                 }
                 """;
         MvcResult badRequestResult = mockMvc.perform(get("/users"))

@@ -9,7 +9,7 @@ CREATE TABLE tasks
     title       varchar(100) NOT NULL,
     description TEXT,
     status      VARCHAR(15),
-    userId      BIGINT       NOT NULL,
-    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
+    user_id     BIGINT       NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 )
 

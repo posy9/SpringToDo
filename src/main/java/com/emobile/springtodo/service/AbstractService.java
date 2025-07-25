@@ -1,6 +1,6 @@
 package com.emobile.springtodo.service;
 
-import com.emobile.springtodo.entity.Entity;
+import com.emobile.springtodo.entity.CommonEntity;
 import com.emobile.springtodo.repository.AbstractRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RequiredArgsConstructor
-public abstract class AbstractService<ENTITY extends Entity> {
+public abstract class AbstractService<ENTITY extends CommonEntity> {
 
     private final AbstractRepository<ENTITY> entityRepository;
 

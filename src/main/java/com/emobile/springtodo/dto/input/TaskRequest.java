@@ -1,12 +1,12 @@
 package com.emobile.springtodo.dto.input;
 
 import com.emobile.springtodo.entity.Status;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record TaskRequest(String title,
+public record TaskRequest(@NotNull String title,
                           String description,
                           Status status,
-                          @Positive(message = "can not be less than 1") Long userId) implements EntityRequest {
+                          @NotNull Long userId) implements EntityRequest {
 }

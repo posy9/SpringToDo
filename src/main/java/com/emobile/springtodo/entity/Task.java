@@ -1,25 +1,49 @@
 package com.emobile.springtodo.entity;
 
-import com.emobile.springtodo.annotation.DatabaseField;
+
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-@RequiredArgsConstructor
-@Setter
-@Getter
-public class Task implements Entity {
+import java.util.Objects;
 
+@Entity
+@Getter
+@Setter
+@Table(name = "tasks")
+public class Task implements CommonEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @DatabaseField
+    @Column(name = "title", nullable = false, length = 50)
     private String title;
-    @DatabaseField
+
+    @Column(name = "description")
     private String description;
-    @DatabaseField
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private Status status;
-    @DatabaseField
-    private Long userId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(title, task.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(title);
+    }
 
 
     @Override
@@ -30,6 +54,13 @@ public class Task implements Entity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.getStatus() == null) {
+            this.setStatus(Status.CREATED);
+        }
     }
 
 }

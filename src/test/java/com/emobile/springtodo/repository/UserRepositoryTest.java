@@ -2,8 +2,6 @@ package com.emobile.springtodo.repository;
 
 import com.emobile.springtodo.entity.User;
 import com.emobile.springtodo.exception.EntityNotFoundException;
-import com.emobile.springtodo.repository.mapper.TaskMapper;
-import com.emobile.springtodo.repository.mapper.UserMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("Тесты UserRepository")
 @Testcontainers
 @DataJpaTest
-@Import({UserRepository.class, UserMapper.class, TaskRepository.class, TaskMapper.class})
+@Import({UserRepository.class, TaskRepository.class})
 public class UserRepositoryTest {
 
     @Container

@@ -1,39 +1,43 @@
 package com.emobile.springtodo.repository;
 
-import com.emobile.springtodo.entity.Status;
 import com.emobile.springtodo.entity.Task;
 import com.emobile.springtodo.exception.EntityNotFoundException;
-import com.emobile.springtodo.repository.mapper.TaskMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static com.emobile.springtodo.repository.util.Tables.TASKS;
 
 @Repository
 public class TaskRepository extends AbstractRepository<Task> {
 
-    public TaskRepository(TaskMapper rowMapper, JdbcTemplate jdbcTemplate) {
-        super(rowMapper, jdbcTemplate, TASKS);
-    }
-
-    public List<Task> findAllForUser(Long userId, int limit, int offset) {
-        String sql = String.format("SELECT * FROM %s WHERE userId=? LIMIT ? OFFSET ?", TASKS);
-        var foundTasks = jdbcTemplate.query(sql, rowMapper, userId, limit, offset);
-        if (foundTasks.isEmpty()) {
-            throw new EntityNotFoundException("Tasks for your request are not found");
-        }
-        return foundTasks;
+    public TaskRepository(EntityManager entityManager) {
+        super(entityManager);
     }
 
     @Override
-    @Transactional
-    public void save(Task task) {
-        if (task.getStatus() == null) {
-            task.setStatus(Status.CREATED);
+    public List<Task> findAll(int limit, int offset) {
+        String jpql = "SELECT t FROM Task t";
+        TypedQuery<Task> query = entityManager.createQuery(jpql, Task.class);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+        List<Task> tasks = query.getResultList();
+        if (tasks.isEmpty()) {
+            throw new EntityNotFoundException("Tasks for your request are not found");
         }
-        super.save(task);
+        return tasks;
+    }
+
+    public List<Task> findAllForUser(Long userId, int limit, int offset) {
+        String jpql = "SELECT t FROM Task t WHERE t.user.id = :userId";
+        TypedQuery<Task> query = entityManager.createQuery(jpql, Task.class);
+        query.setParameter("userId", userId);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+        List<Task> tasks = query.getResultList();
+        if (tasks.isEmpty()) {
+            throw new EntityNotFoundException("Tasks for your request are not found");
+        }
+        return tasks;
     }
 }
