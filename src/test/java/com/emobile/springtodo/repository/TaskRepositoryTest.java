@@ -3,14 +3,13 @@ package com.emobile.springtodo.repository;
 import com.emobile.springtodo.entity.Status;
 import com.emobile.springtodo.entity.Task;
 import com.emobile.springtodo.entity.User;
-import com.emobile.springtodo.exception.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -19,13 +18,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DisplayName("Тесты TaskRepository")
 @Testcontainers
 @DataJpaTest
-@Import({TaskRepository.class})
 public class TaskRepositoryTest {
 
     @Container
@@ -41,7 +38,7 @@ public class TaskRepositoryTest {
     @Sql({"/sql/init-users.sql", "/sql/init-tasks.sql"})
     @DisplayName("findById() возвращает корректное дело если оно существует")
     void findById_shouldReturnUser_WhenUserExists() {
-        Task task = taskRepository.findById(1L);
+        Task task = taskRepository.findById(1L).get();
 
         assertThat(task.getId()).isEqualTo(1L);
         assertThat(task.getTitle()).isEqualTo("Task1");
@@ -51,16 +48,10 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    @DisplayName("findById() генерирует исключение, если дело с указанным id не найдено")
-    void findById_shouldThrowException_whenTaskNotExist() {
-        assertThrows(EntityNotFoundException.class, () -> taskRepository.findById(1L));
-    }
-
-    @Test
     @Sql({"/sql/init-users.sql", "/sql/init-tasks.sql"})
     @DisplayName("findAllForUser() возвращает список дел пользователя")
     void findAllForUser_shouldReturnListOfTasks_whenTasksExist() {
-        List<Task> tasks = taskRepository.findAllForUser(1L, 10, 0);
+        List<Task> tasks = taskRepository.findByUserId(1L, PageRequest.of(0, 10)).getContent();
 
         assertThat(tasks).hasSize(2);
         assertThat(tasks.get(0).getUser().getId()).isEqualTo(1L);
@@ -73,7 +64,8 @@ public class TaskRepositoryTest {
     @Sql({"/sql/init-users.sql", "/sql/init-tasks.sql"})
     @DisplayName("findAllForUser() возвращает правильный список дел пользователя с ограничением")
     void findAllForUser_shouldReturnCorrectListWithLimitAndOffset_whenTasksExist() {
-        List<Task> tasks = taskRepository.findAllForUser(1L, 1, 0);
+        List<Task> tasks = taskRepository.findByUserId(1L, PageRequest.of(0, 1)).getContent();
+
 
         assertThat(tasks).hasSize(1);
         assertThat(tasks.getFirst().getId()).isEqualTo(1L);
@@ -84,12 +76,6 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    @DisplayName("findAllForUser() генерирует исключение если список дел для пользователя не найден")
-    void findAllForUser_shouldThrowException_whenTasksForUserNotExist() {
-        assertThrows(EntityNotFoundException.class, () -> taskRepository.findAllForUser(1L, 10, 0));
-    }
-
-    @Test
     @Sql("/sql/init-users.sql")
     @DisplayName("save() устанавливает статус CREATED, если статус не задан при создании")
     void save_shouldSetStatusToCreated_whenStatusNotSpecified() {
@@ -97,7 +83,7 @@ public class TaskRepositoryTest {
         newTask.setStatus(null);
 
         taskRepository.save(newTask);
-        List<Task> createdTask = taskRepository.findAllForUser(1L, 10, 0);
+        List<Task> createdTask = taskRepository.findByUserId(1L, PageRequest.of(0, 10)).getContent();
         assertThat(createdTask).hasSize(1);
         assertThat(createdTask.getFirst().getStatus()).isEqualTo(Status.CREATED);
     }
@@ -111,7 +97,7 @@ public class TaskRepositoryTest {
 
         taskRepository.save(newTask);
 
-        List<Task> tasks = taskRepository.findAllForUser(1L, 10, 0);
+        List<Task> tasks = taskRepository.findByUserId(1L, PageRequest.of(0, 10)).getContent();
         assertThat(tasks).hasSize(1);
         Task savedTask = tasks.getFirst();
         assertThat(savedTask.getStatus()).isEqualTo(Status.IN_PROGRESS);
@@ -121,13 +107,13 @@ public class TaskRepositoryTest {
     @Sql({"/sql/init-users.sql", "/sql/init-tasks.sql"})
     @DisplayName("update() корректно обновляет дело")
     void update_shouldUpdateTask() {
-        Task task = taskRepository.findById(1L);
+        Task task = taskRepository.findById(1L).get();
         task.setTitle("UpdatedTask");
         task.setStatus(Status.COMPLETED);
 
-        taskRepository.update(task);
+        taskRepository.save(task);
 
-        Task updatedTask = taskRepository.findById(1L);
+        Task updatedTask = taskRepository.findById(1L).get();
         assertThat(updatedTask.getTitle()).isEqualTo("UpdatedTask");
         assertThat(updatedTask.getStatus()).isEqualTo(Status.COMPLETED);
     }
@@ -152,7 +138,7 @@ public class TaskRepositoryTest {
         Long taskId = 1L;
         assertThat(taskRepository.existsById(taskId)).isTrue();
 
-        taskRepository.delete(taskId);
+        taskRepository.deleteById(taskId);
 
         assertThat(taskRepository.existsById(taskId)).isFalse();
     }

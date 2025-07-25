@@ -12,8 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,7 +40,7 @@ class TaskServiceTest {
     @DisplayName("findAll() возвращает список дел")
     void findAll_shouldReturnListOfTasks() {
         var expectedTasks = List.of(createTask(1L, 1L), createTask(2L, 2L), createTask(3L, 3L));
-        when(taskRepository.findAll(3, 0)).thenReturn(expectedTasks);
+        when(taskRepository.findAll(PageRequest.of(0, 3))).thenReturn(new PageImpl<>(expectedTasks));
 
         List<Task> result = taskService.findAll(0, 3);
 
@@ -48,7 +51,7 @@ class TaskServiceTest {
     @DisplayName("findAllForUser() возвращает список дел для пользователя")
     void findAllForUser_shouldReturnUserTasks() {
         List<Task> expectedTasks = List.of(createTask(1L, 1L), createTask(2L, 1L));
-        when(taskRepository.findAllForUser(1L, 2, 0)).thenReturn(expectedTasks);
+        when(taskRepository.findByUserId(1L, PageRequest.of(0, 2))).thenReturn(new PageImpl<>(expectedTasks));
 
         List<Task> result = taskService.findAllForUser(1L, 0, 2);
 
@@ -88,11 +91,11 @@ class TaskServiceTest {
     void update_shouldUpdateTask_whenUserExists() {
         Task task = createTask(1L, 1L);
         when(userRepository.existsById(1L)).thenReturn(true);
-        when(taskRepository.findById(1L)).thenReturn(task);
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
         taskService.update(task);
 
-        verify(taskRepository).update(task);
+        verify(taskRepository).save(task);
     }
 
     @Test
@@ -100,11 +103,11 @@ class TaskServiceTest {
     void update_shouldUpdateTask_whenUserIdIsNull() {
         Task task = createTask(1L, null);
         task.getUser().setId(null);
-        when(taskRepository.findById(1L)).thenReturn(task);
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
         taskService.update(task);
 
-        verify(taskRepository).update(task);
+        verify(taskRepository).save(task);
     }
 
     @Test
@@ -120,7 +123,7 @@ class TaskServiceTest {
     @DisplayName("findById() возвращает задачу, если она существует")
     void findById_shouldReturnTask_whenTaskExists() {
         Task expectedTask = createTask(1L, 1L);
-        when(taskRepository.findById(1L)).thenReturn(expectedTask);
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(expectedTask));
 
         Task result = taskService.findById(1L);
 
@@ -134,7 +137,7 @@ class TaskServiceTest {
 
         taskService.delete(1L);
 
-        verify(taskRepository).delete(1L);
+        verify(taskRepository).deleteById(1L);
     }
 
     @Test

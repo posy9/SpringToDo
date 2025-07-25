@@ -7,6 +7,8 @@ import com.emobile.springtodo.repository.UserRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +43,8 @@ public class TaskService extends AbstractService<Task> {
             key = "#userId + '_' + #page + '_' + #size"
     )
     public List<Task> findAllForUser(long userId, int page, int size) {
-        int offset = page * size;
-        return taskRepository.findAllForUser(userId, size, offset);
+        Pageable pageable = PageRequest.of(page, size);
+        return taskRepository.findByUserId(userId, pageable).getContent();
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.emobile.springtodo.service;
 
 import com.emobile.springtodo.entity.CommonEntity;
-import com.emobile.springtodo.repository.AbstractRepository;
+import com.emobile.springtodo.repository.EntityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public abstract class AbstractService<ENTITY extends CommonEntity> {
 
-    private final AbstractRepository<ENTITY> entityRepository;
+    private final EntityRepository<ENTITY> entityRepository;
 
     @Transactional
     public void save(ENTITY entity) {
@@ -19,23 +21,23 @@ public abstract class AbstractService<ENTITY extends CommonEntity> {
 
     @Transactional
     public void delete(long id) {
-        entityRepository.delete(id);
+        entityRepository.deleteById(id);
     }
 
     @Transactional
     public void update(ENTITY entity) {
         entityRepository.findById(entity.getId());
-        entityRepository.update(entity);
+        entityRepository.save(entity);
     }
 
     @Transactional(readOnly = true)
     public List<ENTITY> findAll(int page, int size) {
-        int offset = page * size;
-        return entityRepository.findAll(size, offset);
+        Pageable pageable = PageRequest.of(page, size);
+        return entityRepository.findAll(pageable).getContent();
     }
 
     @Transactional(readOnly = true)
     public ENTITY findById(long id) {
-        return entityRepository.findById(id);
+        return entityRepository.findById(id).orElse(null);
     }
 }

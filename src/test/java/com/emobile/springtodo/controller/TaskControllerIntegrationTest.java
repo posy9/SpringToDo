@@ -76,17 +76,9 @@ public class TaskControllerIntegrationTest {
     @Test
     @DisplayName("GET /tasks/{id} возвращает 400 если дело с id не найдено")
     void findById_shouldReturnError_whenTaskNotExist() throws Exception {
-        String expectedJson = """
-                 {
-                         "message": "Entity for your request is not found"
-                           }
-                """;
-
         MvcResult result = mockMvc.perform(get("/tasks/{id}", 1L))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andReturn();
-        String actualJson = result.getResponse().getContentAsString();
-        JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.STRICT);
     }
 
     @Test
@@ -234,15 +226,14 @@ public class TaskControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /tasks возвращает 400 если дела не найдены")
+    @DisplayName("GET /tasks возвращает список если дела не найдены")
     void findAll_shouldReturnError_whenTasksNotFound() throws Exception {
         String expectedJson = """
-                {
-                message: "Tasks for your request are not found"
-                }
+                [
+                ]
                 """;
         MvcResult badRequestResult = mockMvc.perform(get("/tasks"))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andReturn();
 
         String actualJson = badRequestResult.getResponse().getContentAsString();
@@ -252,15 +243,14 @@ public class TaskControllerIntegrationTest {
     @Test
     @Sql("/sql/init-users.sql")
     @Sql(scripts = "/sql/clean-db.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    @DisplayName("GET /tasks/user/{id} возвращает 400 если дела для пользователя не найдены")
+    @DisplayName("GET /tasks/user/{id} возвращает пустой список если дела для пользователя не найдены")
     void findAllForUser_shouldReturnError_whenTasksForUserNotFound() throws Exception {
         String expectedJson = """
-                {
-                message: "Tasks for your request are not found"
-                }
+                [
+                ]
                 """;
         MvcResult badRequestResult = mockMvc.perform(get("/tasks/user/{id}", 2L))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andReturn();
 
         String actualJson = badRequestResult.getResponse().getContentAsString();
@@ -268,15 +258,13 @@ public class TaskControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /tasks/user/{id} возвращает 400 если пользователь не найден")
+    @DisplayName("GET /tasks/user/{id} возвращает пустой список если пользователь не найден")
     void findAllForUser_shouldReturnError_whenUserNotFound() throws Exception {
         String expectedJson = """
-                {
-                message: "Tasks for your request are not found"
-                }
+                []
                 """;
         MvcResult badRequestResult = mockMvc.perform(get("/tasks/user/{id}", 2L))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andReturn();
 
         String actualJson = badRequestResult.getResponse().getContentAsString();

@@ -1,14 +1,13 @@
 package com.emobile.springtodo.repository;
 
 import com.emobile.springtodo.entity.User;
-import com.emobile.springtodo.exception.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -17,14 +16,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DisplayName("Тесты UserRepository")
 @Testcontainers
 @DataJpaTest
-@Import({UserRepository.class, TaskRepository.class})
 public class UserRepositoryTest {
 
     @Container
@@ -42,33 +38,22 @@ public class UserRepositoryTest {
     @Sql("/sql/init-users.sql")
     @DisplayName("findById() возвращает корректного пользователя если он существует")
     void findById_shouldReturnUser_WhenUserExists() {
-        User user = userRepository.findById(1L);
+        User user = userRepository.findById(1L).get();
 
         assertThat(user.getId()).isEqualTo(1L);
         assertThat(user.getUsername()).isEqualTo("User1");
     }
 
     @Test
-    @DisplayName("findById() генерирует исключение, если пользователь с указанным id не найден")
-    void findById_shouldThrowException_whenUserNotExist() {
-        assertThrows(EntityNotFoundException.class, () -> userRepository.findById(1L));
-    }
-
-    @Test
     @Sql("/sql/init-users.sql")
     @DisplayName("findAll() возвращает список пользователей")
     void findAll_shouldReturnListOfUser_whenUsersExist() {
-        List<User> users = userRepository.findAll(2, 0);
+        List<User> users = userRepository.findAll(PageRequest.of(0, 2)).getContent();
         assertThat(users).hasSize(2);
         assertThat(users.getFirst().getUsername()).isEqualTo("User1");
         assertThat(users.get(1).getUsername()).isEqualTo("User2");
     }
 
-    @Test
-    @DisplayName("findAll() генерирует исключение если пользователи не найдены")
-    void findAll_shouldThrow_WhenUsersNotExist() {
-        assertThrows(EntityNotFoundException.class, () -> userRepository.findAll(0, 10));
-    }
 
     @Test
     @DisplayName("save() сохраняет пользователя")
@@ -77,7 +62,7 @@ public class UserRepositoryTest {
 
         userRepository.save(newUser);
 
-        List<User> createdUser = userRepository.findAll(10, 0);
+        List<User> createdUser = userRepository.findAll(PageRequest.of(0, 10)).getContent();
         assertThat(createdUser).hasSize(1);
         assertThat(createdUser.getFirst().getUsername()).isEqualTo("TestUser");
     }
@@ -86,12 +71,12 @@ public class UserRepositoryTest {
     @Sql("/sql/init-users.sql")
     @DisplayName("update() обновляет пользователя")
     void update_shouldUpdateUser() {
-        User user = userRepository.findById(1L);
+        User user = userRepository.findById(1L).get();
         user.setUsername("TestUser");
 
-        userRepository.update(user);
+        userRepository.save(user);
 
-        User updatedUser = userRepository.findById(1L);
+        User updatedUser = userRepository.findById(1L).get();
         assertThat(updatedUser.getUsername()).isEqualTo("TestUser");
     }
 
@@ -114,26 +99,18 @@ public class UserRepositoryTest {
     void delete_shouldDeleteUserAndTasksForThisUser() {
         assertThat(userRepository.existsById(1L)).isTrue();
 
-        userRepository.delete(1L);
+        userRepository.deleteById(1L);
 
         assertThat(userRepository.existsById(1L)).isFalse();
-        assertThrows(EntityNotFoundException.class, () -> taskRepository.findAllForUser(1L, 0, 10));
     }
 
     @Test
     @Sql("/sql/init-users.sql")
     @DisplayName("findByUsername() возвращает пользователя если пользователь с таким именем существует")
     void findByUsername_shouldReturnUser_whenUserExists() {
-        User user = userRepository.findByUsername("User1");
+        User user = userRepository.findByUsername("User1").get();
         assertThat(user.getId()).isEqualTo(1L);
         assertThat(user.getUsername()).isEqualTo("User1");
-    }
-
-    @Test
-    @DisplayName("findByUsername() возвращает null если пользователь с таким именем не существует")
-    void findByUsername_shouldReturnNull_whenUserNotExist() {
-        User user = userRepository.findByUsername("User1");
-        assertNull(user);
     }
 
     private User createTestUser() {

@@ -10,8 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,7 +47,7 @@ class UserServiceTest {
     void save_shouldThrowException_whenUserWithUsernameExists() {
         User existingUser = createUser(1L, "testUser");
         User newUser = createUser(2L, "testUser");
-        when(userRepository.findByUsername("testUser")).thenReturn(existingUser);
+        when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(existingUser));
 
         assertThrows(EntityExistsException.class, () -> userService.save(newUser));
     }
@@ -53,7 +56,7 @@ class UserServiceTest {
     @DisplayName("findById() возвращает пользователя, если он существует")
     void findById_shouldReturnUser_whenUserExists() {
         User expectedUser = createUser(1L, "testUser");
-        when(userRepository.findById(1L)).thenReturn(expectedUser);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(expectedUser));
 
         User result = userService.findById(1L);
 
@@ -67,7 +70,7 @@ class UserServiceTest {
                 createUser(1L, "user1"),
                 createUser(2L, "user2")
         );
-        when(userRepository.findAll(2, 0)).thenReturn(expectedUsers);
+        when(userRepository.findAll(PageRequest.of(0, 2))).thenReturn(new PageImpl<>(expectedUsers));
 
         List<User> result = userService.findAll(0, 2);
 
@@ -81,7 +84,7 @@ class UserServiceTest {
 
         userService.delete(1L);
 
-        verify(userRepository).delete(1L);
+        verify(userRepository).deleteById(1L);
     }
 
     @Test
@@ -96,12 +99,12 @@ class UserServiceTest {
     @DisplayName("update() обновляет пользователя если новое имя не существовало ранее")
     void update_shouldUpdateUser_whenUsernameNotExist() {
         User user = createUser(1L, "newUsername");
-        when(userRepository.findByUsername("newUsername")).thenReturn(null);
-        when(userRepository.findById(1L)).thenReturn(user);
+        when(userRepository.findByUsername("newUsername")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
         userService.update(user);
 
-        verify(userRepository).update(user);
+        verify(userRepository).save(user);
     }
 
     @Test
@@ -109,7 +112,7 @@ class UserServiceTest {
     void update_shouldThrowException_whenUsernameAlreadyExists() {
         User existingUser = createUser(2L, "existingUsername");
         User userToUpdate = createUser(1L, "existingUsername");
-        when(userRepository.findByUsername("existingUsername")).thenReturn(existingUser);
+        when(userRepository.findByUsername("existingUsername")).thenReturn(Optional.of(existingUser));
 
         assertThrows(EntityExistsException.class, () -> userService.update(userToUpdate));
     }

@@ -70,7 +70,7 @@ public class UserService extends AbstractService<User> {
             }
     )
     public void update(User user) {
-        if (userRepository.findByUsername(user.getUsername()) == null) {
+        if (userRepository.findByUsername(user.getUsername()).isEmpty()) {
             super.update(user);
         } else {
             throw new EntityExistsException(String.format("User %s already exists", user.getUsername()));
