@@ -54,6 +54,7 @@ public class UserService extends AbstractService<User> {
                     @CacheEvict(cacheNames = "tasksForUser", allEntries = true)
             }
     )
+    @Transactional
     public void delete(long id) {
         if (userRepository.existsById(id)) {
             super.delete(id);
