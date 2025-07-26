@@ -69,6 +69,7 @@ public class UserService extends AbstractService<User> {
                     @CacheEvict(cacheNames = "usersList", allEntries = true)
             }
     )
+    @Transactional
     public void update(User user) {
         if (userRepository.findByUsername(user.getUsername()).isEmpty()) {
             super.update(user);
