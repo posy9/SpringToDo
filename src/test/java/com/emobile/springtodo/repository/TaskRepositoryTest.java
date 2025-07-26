@@ -152,7 +152,8 @@ public class TaskRepositoryTest {
         Long taskId = 1L;
         assertThat(taskRepository.existsById(taskId)).isTrue();
 
-        taskRepository.delete(taskId);
+        var task = taskRepository.findById(1L);
+        taskRepository.delete(task);
 
         assertThat(taskRepository.existsById(taskId)).isFalse();
     }

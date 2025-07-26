@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -77,17 +78,17 @@ class UserServiceTest {
     @Test
     @DisplayName("delete() удаляет пользователя, если он существует")
     void delete_shouldDeleteUser_whenUserExists() {
-        when(userRepository.existsById(1L)).thenReturn(true);
+        when(userRepository.findById(1L)).thenReturn(createUser(1L, "user1"));
 
         userService.delete(1L);
 
-        verify(userRepository).delete(1L);
+        verify(userRepository).delete(any(User.class));
     }
 
     @Test
     @DisplayName("delete() генерирует исключение при попытке удалить несуществующего пользователя")
     void delete_shouldThrowException_whenUserNotExist() {
-        when(userRepository.existsById(1L)).thenReturn(false);
+        when(userRepository.findById(1L)).thenReturn(null);
 
         assertThrows(EntityNotFoundException.class, () -> userService.delete(1L));
     }

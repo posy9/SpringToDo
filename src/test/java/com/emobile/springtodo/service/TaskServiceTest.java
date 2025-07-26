@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -130,11 +131,11 @@ class TaskServiceTest {
     @Test
     @DisplayName("delete() удаляет задачу, если она существует")
     void delete_shouldDeleteTask_whenTaskExists() {
-        when(taskRepository.existsById(1L)).thenReturn(true);
+        when(taskRepository.findById(1L)).thenReturn(createTask(1L, 1L));
 
         taskService.delete(1L);
 
-        verify(taskRepository).delete(1L);
+        verify(taskRepository).delete(any(Task.class));
     }
 
     @Test

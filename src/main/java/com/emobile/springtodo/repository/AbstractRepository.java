@@ -24,8 +24,8 @@ public abstract class AbstractRepository<T extends CommonEntity> {
         entityManager.persist(entity);
     }
 
-    public void delete(Long id) {
-        entityManager.remove(entityManager.find(entityClass, id));
+    public void delete(T entity) {
+        entityManager.remove(entity);
     }
 
     public T findById(Long id) {

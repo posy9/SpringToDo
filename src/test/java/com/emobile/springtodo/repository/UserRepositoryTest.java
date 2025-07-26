@@ -114,7 +114,8 @@ public class UserRepositoryTest {
     void delete_shouldDeleteUserAndTasksForThisUser() {
         assertThat(userRepository.existsById(1L)).isTrue();
 
-        userRepository.delete(1L);
+        User user = userRepository.findById(1L);
+        userRepository.delete(user);
 
         assertThat(userRepository.existsById(1L)).isFalse();
         assertThrows(EntityNotFoundException.class, () -> taskRepository.findAllForUser(1L, 0, 10));

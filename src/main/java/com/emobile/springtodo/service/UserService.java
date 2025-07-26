@@ -54,10 +54,11 @@ public class UserService extends AbstractService<User> {
                     @CacheEvict(cacheNames = "tasksForUser", allEntries = true)
             }
     )
+    @Transactional
     public void delete(long id) {
-        if (userRepository.existsById(id)) {
+        try {
             super.delete(id);
-        } else {
+        } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(String.format("User with id %s not found", id));
         }
     }
