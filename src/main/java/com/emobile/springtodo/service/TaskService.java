@@ -97,12 +97,11 @@ public class TaskService extends AbstractService<Task> {
     @Transactional
     @Override
     public void delete(long id) {
-        if (taskRepository.existsById(id)) {
+        try {
             super.delete(id);
-        } else {
+        } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(String.format("Task with id %s not found", id));
         }
-
     }
 
 }

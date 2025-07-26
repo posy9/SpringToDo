@@ -56,9 +56,9 @@ public class UserService extends AbstractService<User> {
     )
     @Transactional
     public void delete(long id) {
-        if (userRepository.existsById(id)) {
+        try {
             super.delete(id);
-        } else {
+        } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(String.format("User with id %s not found", id));
         }
     }

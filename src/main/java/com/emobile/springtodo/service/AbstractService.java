@@ -1,6 +1,7 @@
 package com.emobile.springtodo.service;
 
 import com.emobile.springtodo.entity.CommonEntity;
+import com.emobile.springtodo.exception.EntityNotFoundException;
 import com.emobile.springtodo.repository.EntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +22,12 @@ public abstract class AbstractService<ENTITY extends CommonEntity> {
 
     @Transactional
     public void delete(long id) {
-        entityRepository.deleteById(id);
+        var entity = entityRepository.findById(id);
+        if(entity.isPresent()) {
+            entityRepository.delete(entity.get());
+        } else {
+            throw new EntityNotFoundException(String.format("Entity with id %s not found", id));
+        }
     }
 
     @Transactional
