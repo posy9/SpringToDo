@@ -7,9 +7,9 @@ pipeline {
 
     stages {
         stage('PR Check') {
-//             when {
-//                 branch 'main'
-//             }
+            when {
+                branch 'origin/main'
+            }
             steps {
                 script {
                     echo "Checking PR to dev branch..."
@@ -23,11 +23,9 @@ pipeline {
 //              when {
 //                 branch 'main'
 //             }
-//
             steps {
                 script {
                     echo "Building and deploying Docker image..."
-
 
                     sh 'mvn clean package'
 
