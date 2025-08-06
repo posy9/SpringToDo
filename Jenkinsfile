@@ -1,10 +1,5 @@
 pipeline {
     agent any
-
-    triggers {
-        githubPush() 
-    }
-
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
         DOCKER_IMAGE = 'posy9/Spring-to-do'
@@ -25,9 +20,7 @@ pipeline {
         }
 
         stage('Build and Deploy') {
-            when {
-                branch 'main'
-            }
+       
             steps {
                 script {
                     echo "Building and deploying Docker image..."
