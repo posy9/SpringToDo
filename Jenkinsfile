@@ -12,17 +12,15 @@ pipeline {
             }
             steps {
                 script {
-                    echo "Checking PR to dev branch..."
-                    sh 'mvn clean install'
-
+                    bat 'mvn clean install'
                 }
             }
         }
 
         stage('Build and Deploy') {
-//              when {
-//                 branch 'main'
-//             }
+             when {
+                branch 'origin/main'
+            }
             steps {
                 script {
                     echo "Building and deploying Docker image..."
