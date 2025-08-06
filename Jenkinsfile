@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('PR Check') {
             when {
-                changeRequest target: 'dev'
+                branch 'main'
             }
             steps {
                 script {
