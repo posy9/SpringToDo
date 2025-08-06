@@ -20,6 +20,9 @@ pipeline {
         }
 
         stage('Build and Deploy') {
+             when {
+                branch 'main'
+            }
        
             steps {
                 script {
