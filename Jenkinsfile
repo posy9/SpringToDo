@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
-        DOCKER_IMAGE = 'posy9/Spring-to-do'
+        DOCKER_IMAGE = 'posy9/spring-to-do'
     }
 
     stages {
