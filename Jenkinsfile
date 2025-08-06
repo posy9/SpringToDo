@@ -22,7 +22,7 @@ pipeline {
 
         stage('Build and Deploy') {
             when {
-                branch 'master'
+                branch 'main'
             }
             steps {
                 script {
