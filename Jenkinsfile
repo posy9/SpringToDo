@@ -7,9 +7,9 @@ pipeline {
 
     stages {
         stage('PR Check') {
-            when {
-                branch 'origin/main'
-            }
+             when {
+                       changeRequest target: 'dev'
+                   }
             steps {
                 script {
                     bat 'mvn clean install'
@@ -18,9 +18,9 @@ pipeline {
         }
 
         stage('Build and Deploy') {
-//              when {
-//                 branch 'origin/main'
-//             }
+            when {
+                        branch 'main'
+                  }
             steps {
                 script {
                     echo "Building and deploying Docker image..."
@@ -34,7 +34,6 @@ pipeline {
 
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
                         docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").push()
-                        docker.image("${DOCKER_IMAGE}:latest").push()
                     }
                 }
             }
