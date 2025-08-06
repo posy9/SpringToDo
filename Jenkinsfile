@@ -18,9 +18,9 @@ pipeline {
         }
 
         stage('Build and Deploy') {
-             when {
-                branch 'origin/main'
-            }
+//              when {
+//                 branch 'origin/main'
+//             }
             steps {
                 script {
                     echo "Building and deploying Docker image..."
