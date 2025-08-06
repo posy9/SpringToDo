@@ -7,9 +7,9 @@ pipeline {
 
     stages {
         stage('PR Check') {
-            when {
-                branch 'main'
-            }
+//             when {
+//                 branch 'main'
+//             }
             steps {
                 script {
                     echo "Checking PR to dev branch..."
@@ -20,10 +20,10 @@ pipeline {
         }
 
         stage('Build and Deploy') {
-             when {
-                branch 'main'
-            }
-       
+//              when {
+//                 branch 'main'
+//             }
+//
             steps {
                 script {
                     echo "Building and deploying Docker image..."
