@@ -18,14 +18,14 @@ pipeline {
         }
 
         stage('Build and Deploy') {
-             when {
-                branch 'origin/main'
-            }
+//              when {
+//                 branch 'origin/main'
+//             }
             steps {
                 script {
                     echo "Building and deploying Docker image..."
 
-                    sh 'mvn clean package'
+                    bat 'mvn clean package'
 
 
                     docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
